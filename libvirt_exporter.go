@@ -423,27 +423,42 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 		libvirtDomainInfoMaxMemBytesDesc,
 		prometheus.GaugeValue,
 		float64(info.MaxMem)*1024,
-		domainName)
+		domainName,
+		domainUUID,
+		desc.Metadata.NovaInstance.NovaName,
+		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
 	ch <- prometheus.MustNewConstMetric(
 		libvirtDomainInfoMemoryUsageBytesDesc,
 		prometheus.GaugeValue,
 		float64(info.Memory)*1024,
-		domainName)
+		domainName,
+		domainUUID,
+		desc.Metadata.NovaInstance.NovaName,
+		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
 	ch <- prometheus.MustNewConstMetric(
 		libvirtDomainInfoNrVirtCPUDesc,
 		prometheus.GaugeValue,
 		float64(info.NrVirtCpu),
-		domainName)
+		domainName,
+		domainUUID,
+		desc.Metadata.NovaInstance.NovaName,
+		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
 	ch <- prometheus.MustNewConstMetric(
 		libvirtDomainInfoCPUTimeDesc,
 		prometheus.CounterValue,
 		float64(info.CpuTime)/1000/1000/1000, // From nsec to sec
-		domainName)
+		domainName,
+		domainUUID,
+		desc.Metadata.NovaInstance.NovaName,
+		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
 	ch <- prometheus.MustNewConstMetric(
 		libvirtDomainInfoVirDomainState,
 		prometheus.GaugeValue,
 		float64(info.State),
-		domainName)
+		domainName,		
+		domainUUID,
+		desc.Metadata.NovaInstance.NovaName,
+		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
 
 	domainStatsVcpu, err := stat.Domain.GetVcpus()
 	if err != nil {
@@ -458,6 +473,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.GaugeValue,
 				float64(vcpu.State),
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				strconv.FormatInt(int64(vcpu.Number), 10))
 
 			ch <- prometheus.MustNewConstMetric(
@@ -465,6 +483,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.CounterValue,
 				float64(vcpu.CpuTime)/1000/1000/1000, // From nsec to sec
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				strconv.FormatInt(int64(vcpu.Number), 10))
 
 			ch <- prometheus.MustNewConstMetric(
@@ -472,6 +493,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.GaugeValue,
 				float64(vcpu.Cpu),
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				strconv.FormatInt(int64(vcpu.Number), 10))
 		}
 		/* There's no Wait in GetVcpus()
@@ -486,6 +510,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 					prometheus.CounterValue,
 					float64(vcpu.Wait)/1000/1000/1000,
 					domainName,
+					domainUUID,
+					desc.Metadata.NovaInstance.NovaName,
+					desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 					strconv.FormatInt(int64(cpuNum), 10))
 			}
 			if vcpu.DelaySet {
@@ -494,6 +521,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 					prometheus.CounterValue,
 					float64(vcpu.Delay)/1e9,
 					domainName,
+					domainUUID,
+					desc.Metadata.NovaInstance.NovaName,
+					desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 					strconv.FormatInt(int64(cpuNum), 10))
 			}
 		}
@@ -529,6 +559,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 			prometheus.GaugeValue,
 			float64(1),
 			domainName,
+			domainUUID,
+			desc.Metadata.NovaInstance.NovaName,
+			desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 			disk.Name,
 			DiskSource,
 			Device.Serial,
@@ -546,6 +579,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.CounterValue,
 				float64(disk.RdBytes),
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				disk.Name)
 		}
 		if disk.RdReqsSet {
@@ -554,6 +590,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.CounterValue,
 				float64(disk.RdReqs),
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				disk.Name)
 		}
 		if disk.RdTimesSet {
@@ -562,6 +601,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.CounterValue,
 				float64(disk.RdTimes)/1e9,
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				disk.Name)
 		}
 		if disk.WrBytesSet {
@@ -570,6 +612,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.CounterValue,
 				float64(disk.WrBytes),
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				disk.Name)
 		}
 		if disk.WrReqsSet {
@@ -578,6 +623,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.CounterValue,
 				float64(disk.WrReqs),
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				disk.Name)
 		}
 		if disk.WrTimesSet {
@@ -586,6 +634,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.CounterValue,
 				float64(disk.WrTimes)/1e9,
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				disk.Name)
 		}
 		if disk.FlReqsSet {
@@ -594,6 +645,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.CounterValue,
 				float64(disk.FlReqs),
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				disk.Name)
 		}
 		if disk.FlTimesSet {
@@ -602,6 +656,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.CounterValue,
 				float64(disk.FlTimes)/1e9,
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				disk.Name)
 		}
 		if disk.AllocationSet {
@@ -610,6 +667,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.GaugeValue,
 				float64(disk.Allocation),
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				disk.Name)
 		}
 		if disk.CapacitySet {
@@ -618,6 +678,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.GaugeValue,
 				float64(disk.Capacity),
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				disk.Name)
 		}
 		if disk.PhysicalSet {
@@ -626,6 +689,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.GaugeValue,
 				float64(disk.Physical),
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				disk.Name)
 		}
 
@@ -650,6 +716,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 					prometheus.GaugeValue,
 					float64(blockIOTuneParams.TotalBytesSec),
 					domainName,
+					domainUUID,
+					desc.Metadata.NovaInstance.NovaName,
+					desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 					disk.Name)
 			}
 			if blockIOTuneParams.ReadBytesSecSet {
@@ -658,6 +727,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 					prometheus.GaugeValue,
 					float64(blockIOTuneParams.ReadBytesSec),
 					domainName,
+					domainUUID,
+					desc.Metadata.NovaInstance.NovaName,
+					desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 					disk.Name)
 			}
 			if blockIOTuneParams.WriteBytesSecSet {
@@ -666,6 +738,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 					prometheus.GaugeValue,
 					float64(blockIOTuneParams.WriteBytesSec),
 					domainName,
+					domainUUID,
+					desc.Metadata.NovaInstance.NovaName,
+					desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 					disk.Name)
 			}
 			if blockIOTuneParams.TotalIopsSecSet {
@@ -674,6 +749,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 					prometheus.GaugeValue,
 					float64(blockIOTuneParams.TotalIopsSec),
 					domainName,
+					domainUUID,
+					desc.Metadata.NovaInstance.NovaName,
+					desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 					disk.Name)
 			}
 			if blockIOTuneParams.ReadIopsSecSet {
@@ -682,6 +760,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 					prometheus.GaugeValue,
 					float64(blockIOTuneParams.ReadIopsSec),
 					domainName,
+					domainUUID,
+					desc.Metadata.NovaInstance.NovaName,
+					desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 					disk.Name)
 			}
 			if blockIOTuneParams.WriteIopsSecSet {
@@ -690,6 +771,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 					prometheus.GaugeValue,
 					float64(blockIOTuneParams.WriteIopsSec),
 					domainName,
+					domainUUID,
+					desc.Metadata.NovaInstance.NovaName,
+					desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 					disk.Name)
 			}
 			if blockIOTuneParams.TotalBytesSecMaxSet {
@@ -698,6 +782,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 					prometheus.GaugeValue,
 					float64(blockIOTuneParams.TotalBytesSecMax),
 					domainName,
+					domainUUID,
+					desc.Metadata.NovaInstance.NovaName,
+					desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 					disk.Name)
 			}
 			if blockIOTuneParams.ReadBytesSecMaxSet {
@@ -706,6 +793,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 					prometheus.GaugeValue,
 					float64(blockIOTuneParams.ReadBytesSecMax),
 					domainName,
+					domainUUID,
+					desc.Metadata.NovaInstance.NovaName,
+					desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 					disk.Name)
 			}
 			if blockIOTuneParams.WriteBytesSecMaxSet {
@@ -714,6 +804,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 					prometheus.GaugeValue,
 					float64(blockIOTuneParams.WriteBytesSecMax),
 					domainName,
+					domainUUID,
+					desc.Metadata.NovaInstance.NovaName,
+					desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 					disk.Name)
 			}
 			if blockIOTuneParams.TotalIopsSecMaxSet {
@@ -722,6 +815,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 					prometheus.GaugeValue,
 					float64(blockIOTuneParams.TotalIopsSecMax),
 					domainName,
+					domainUUID,
+					desc.Metadata.NovaInstance.NovaName,
+					desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 					disk.Name)
 			}
 			if blockIOTuneParams.ReadIopsSecMaxSet {
@@ -730,6 +826,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 					prometheus.GaugeValue,
 					float64(blockIOTuneParams.ReadIopsSecMax),
 					domainName,
+					domainUUID,
+					desc.Metadata.NovaInstance.NovaName,
+					desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 					disk.Name)
 			}
 			if blockIOTuneParams.WriteIopsSecMaxSet {
@@ -738,6 +837,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 					prometheus.GaugeValue,
 					float64(blockIOTuneParams.WriteIopsSecMax),
 					domainName,
+					domainUUID,
+					desc.Metadata.NovaInstance.NovaName,
+					desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 					disk.Name)
 			}
 			if blockIOTuneParams.TotalBytesSecMaxLengthSet {
@@ -746,6 +848,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 					prometheus.GaugeValue,
 					float64(blockIOTuneParams.TotalBytesSecMaxLength),
 					domainName,
+					domainUUID,
+					desc.Metadata.NovaInstance.NovaName,
+					desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 					disk.Name)
 			}
 			if blockIOTuneParams.ReadBytesSecMaxLengthSet {
@@ -754,6 +859,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 					prometheus.GaugeValue,
 					float64(blockIOTuneParams.ReadBytesSecMaxLength),
 					domainName,
+					domainUUID,
+					desc.Metadata.NovaInstance.NovaName,
+					desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 					disk.Name)
 			}
 			if blockIOTuneParams.WriteBytesSecMaxLengthSet {
@@ -762,6 +870,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 					prometheus.GaugeValue,
 					float64(blockIOTuneParams.WriteBytesSecMaxLength),
 					domainName,
+					domainUUID,
+					desc.Metadata.NovaInstance.NovaName,
+					desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 					disk.Name)
 			}
 			if blockIOTuneParams.TotalIopsSecMaxLengthSet {
@@ -770,6 +881,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 					prometheus.GaugeValue,
 					float64(blockIOTuneParams.TotalIopsSecMaxLength),
 					domainName,
+					domainUUID,
+					desc.Metadata.NovaInstance.NovaName,
+					desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 					disk.Name)
 			}
 			if blockIOTuneParams.ReadIopsSecMaxLengthSet {
@@ -778,6 +892,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 					prometheus.GaugeValue,
 					float64(blockIOTuneParams.ReadIopsSecMaxLength),
 					domainName,
+					domainUUID,
+					desc.Metadata.NovaInstance.NovaName,
+					desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 					disk.Name)
 			}
 			if blockIOTuneParams.WriteIopsSecMaxLengthSet {
@@ -786,6 +903,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 					prometheus.GaugeValue,
 					float64(blockIOTuneParams.WriteIopsSecMaxLength),
 					domainName,
+					domainUUID,
+					desc.Metadata.NovaInstance.NovaName,
+					desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 					disk.Name)
 			}
 			if blockIOTuneParams.SizeIopsSecSet {
@@ -794,6 +914,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 					prometheus.GaugeValue,
 					float64(blockIOTuneParams.SizeIopsSec),
 					domainName,
+					domainUUID,
+					desc.Metadata.NovaInstance.NovaName,
+					desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 					disk.Name)
 			}
 		}
@@ -817,6 +940,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.GaugeValue,
 				float64(1),
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				SourceBridge,
 				iface.Name,
 				VirtualInterface)
@@ -827,6 +953,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.CounterValue,
 				float64(iface.RxBytes),
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				iface.Name)
 		}
 		if iface.RxPktsSet {
@@ -835,6 +964,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.CounterValue,
 				float64(iface.RxPkts),
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				iface.Name)
 		}
 		if iface.RxErrsSet {
@@ -843,6 +975,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.CounterValue,
 				float64(iface.RxErrs),
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				iface.Name)
 		}
 		if iface.RxDropSet {
@@ -851,6 +986,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.CounterValue,
 				float64(iface.RxDrop),
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				iface.Name)
 		}
 		if iface.TxBytesSet {
@@ -859,6 +997,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.CounterValue,
 				float64(iface.TxBytes),
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				iface.Name)
 		}
 		if iface.TxPktsSet {
@@ -867,6 +1008,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.CounterValue,
 				float64(iface.TxPkts),
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				iface.Name)
 		}
 		if iface.TxErrsSet {
@@ -875,6 +1019,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.CounterValue,
 				float64(iface.TxErrs),
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				iface.Name)
 		}
 		if iface.TxDropSet {
@@ -883,6 +1030,9 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 				prometheus.CounterValue,
 				float64(iface.TxDrop),
 				domainName,
+				domainUUID,
+				desc.Metadata.NovaInstance.NovaName,
+				desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName,
 				iface.Name)
 		}
 	}
@@ -902,47 +1052,74 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 		libvirtDomainMemoryStatMajorFaultTotalDesc,
 		prometheus.CounterValue,
 		float64(MemoryStats.MajorFault),
-		domainName)
+		domainName
+		domainUUID,
+		desc.Metadata.NovaInstance.NovaName,
+		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
 	ch <- prometheus.MustNewConstMetric(
 		libvirtDomainMemoryStatMinorFaultTotalDesc,
 		prometheus.CounterValue,
 		float64(MemoryStats.MinorFault),
-		domainName)
+		domainName
+		domainUUID,
+		desc.Metadata.NovaInstance.NovaName,
+		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
 	ch <- prometheus.MustNewConstMetric(
 		libvirtDomainMemoryStatUnusedBytesDesc,
 		prometheus.GaugeValue,
 		float64(MemoryStats.Unused)*1024,
-		domainName)
+		domainName
+		domainUUID,
+		desc.Metadata.NovaInstance.NovaName,
+		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
 	ch <- prometheus.MustNewConstMetric(
 		libvirtDomainMemoryStatAvailableBytesDesc,
 		prometheus.GaugeValue,
 		float64(MemoryStats.Available)*1024,
-		domainName)
+		domainName
+		domainUUID,
+		desc.Metadata.NovaInstance.NovaName,
+		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
 	ch <- prometheus.MustNewConstMetric(
 		libvirtDomainMemoryStatActualBaloonBytesDesc,
 		prometheus.GaugeValue,
 		float64(MemoryStats.ActualBalloon)*1024,
-		domainName)
+		domainName
+		domainUUID,
+		desc.Metadata.NovaInstance.NovaName,
+		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
 	ch <- prometheus.MustNewConstMetric(
 		libvirtDomainMemoryStatRssBytesDesc,
 		prometheus.GaugeValue,
 		float64(MemoryStats.Rss)*1024,
-		domainName)
+		domainName
+		domainUUID,
+		desc.Metadata.NovaInstance.NovaName,
+		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
 	ch <- prometheus.MustNewConstMetric(
 		libvirtDomainMemoryStatUsableBytesDesc,
 		prometheus.GaugeValue,
 		float64(MemoryStats.Usable)*1024,
-		domainName)
+		domainName
+		domainUUID,
+		desc.Metadata.NovaInstance.NovaName,
+		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
 	ch <- prometheus.MustNewConstMetric(
 		libvirtDomainMemoryStatDiskCachesBytesDesc,
 		prometheus.GaugeValue,
 		float64(MemoryStats.DiskCaches)*1024,
-		domainName)
+		domainName		
+		domainUUID,
+		desc.Metadata.NovaInstance.NovaName,
+		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
 	ch <- prometheus.MustNewConstMetric(
 		libvirtDomainMemoryStatUsedPercentDesc,
 		prometheus.GaugeValue,
 		float64(usedPercent),
-		domainName)
+		domainName
+		domainUUID,
+		desc.Metadata.NovaInstance.NovaName,
+		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
 
 	return nil
 }
