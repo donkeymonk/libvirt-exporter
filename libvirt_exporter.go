@@ -1052,7 +1052,7 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 		libvirtDomainMemoryStatMajorFaultTotalDesc,
 		prometheus.CounterValue,
 		float64(MemoryStats.MajorFault),
-		domainName
+		domainName,
 		domainUUID,
 		desc.Metadata.NovaInstance.NovaName,
 		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
@@ -1060,7 +1060,7 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 		libvirtDomainMemoryStatMinorFaultTotalDesc,
 		prometheus.CounterValue,
 		float64(MemoryStats.MinorFault),
-		domainName
+		domainName,
 		domainUUID,
 		desc.Metadata.NovaInstance.NovaName,
 		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
@@ -1068,7 +1068,7 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 		libvirtDomainMemoryStatUnusedBytesDesc,
 		prometheus.GaugeValue,
 		float64(MemoryStats.Unused)*1024,
-		domainName
+		domainName,
 		domainUUID,
 		desc.Metadata.NovaInstance.NovaName,
 		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
@@ -1076,7 +1076,7 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 		libvirtDomainMemoryStatAvailableBytesDesc,
 		prometheus.GaugeValue,
 		float64(MemoryStats.Available)*1024,
-		domainName
+		domainName,
 		domainUUID,
 		desc.Metadata.NovaInstance.NovaName,
 		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
@@ -1084,7 +1084,7 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 		libvirtDomainMemoryStatActualBaloonBytesDesc,
 		prometheus.GaugeValue,
 		float64(MemoryStats.ActualBalloon)*1024,
-		domainName
+		domainName,
 		domainUUID,
 		desc.Metadata.NovaInstance.NovaName,
 		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
@@ -1092,7 +1092,7 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 		libvirtDomainMemoryStatRssBytesDesc,
 		prometheus.GaugeValue,
 		float64(MemoryStats.Rss)*1024,
-		domainName
+		domainName,
 		domainUUID,
 		desc.Metadata.NovaInstance.NovaName,
 		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
@@ -1100,7 +1100,7 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 		libvirtDomainMemoryStatUsableBytesDesc,
 		prometheus.GaugeValue,
 		float64(MemoryStats.Usable)*1024,
-		domainName
+		domainName,
 		domainUUID,
 		desc.Metadata.NovaInstance.NovaName,
 		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
@@ -1108,7 +1108,7 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 		libvirtDomainMemoryStatDiskCachesBytesDesc,
 		prometheus.GaugeValue,
 		float64(MemoryStats.DiskCaches)*1024,
-		domainName		
+		domainName,		
 		domainUUID,
 		desc.Metadata.NovaInstance.NovaName,
 		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
@@ -1116,7 +1116,7 @@ func CollectDomain(ch chan<- prometheus.Metric, stat libvirt.DomainStats) error 
 		libvirtDomainMemoryStatUsedPercentDesc,
 		prometheus.GaugeValue,
 		float64(usedPercent),
-		domainName
+		domainName,
 		domainUUID,
 		desc.Metadata.NovaInstance.NovaName,
 		desc.Metadata.NovaInstance.NovaOwner.NovaProject.ProjectName)
